@@ -19,3 +19,8 @@ Thumbs.db
 # Backup files
 *.bak
 *.Identifier
+
+# Logs and data files
+*.mmd
+*.json
+*.log
