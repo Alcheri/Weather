@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "limnoria-weather"
 version = "1.0.0"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.9"
 authors = [{ name = "Barry Suridge", email = "barry.suridge@outlook.com" }]
 dependencies = ["aiohttp"]
 classifiers = [
@@ -24,3 +24,6 @@ Weather = "limnoria_weather"
 
 [tool.setuptools.package-data]
 "limnoria_weather" = ["locales/*.po"]
+
+[tool.pytest.ini_options]
+python_files = ["test.py", "test_*.py", "*_test.py"]

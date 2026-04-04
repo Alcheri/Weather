@@ -97,4 +97,4 @@ correctly. A PNG render of the flowchart is included for compatibility.
 The Mermaid source remains available for editing.
 
 <br/><br/>
-<p align="center">Copyright © MMXXIV, Barry Suridge</p>
+<p align="center">Copyright © MMXXVI, Barry Suridge</p>

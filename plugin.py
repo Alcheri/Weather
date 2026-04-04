@@ -1,5 +1,6 @@
+# -*- coding: utf-8 -*-
 ###
-# Copyright © 2021 - 2024, Barry Suridge
+# Copyright © 2017 - 2026, Barry Suridge
 # All rights reserved.
 #
 ###
@@ -7,8 +8,12 @@
 # A fully asynchronous Weather plugin for Limnoria using the OpenWeather and Google Maps APIs.
 #
 ##
+
 import json
 import math
+import threading
+from concurrent.futures import TimeoutError as FutureTimeoutError
+from typing import NoReturn, Optional
 
 try:
     import aiohttp  # asynchronous HTTP client and server framework
@@ -41,8 +46,10 @@ FILENAME = conf.supybot.directories.data.dirize("Weather.json")
 
 # Global Error Routine
 def handle_error(
-    error: Exception, context: str = None, user_message: str = "An error occurred."
-):
+    error: Exception,
+    context: Optional[str] = None,
+    user_message: str = "An error occurred.",
+) -> NoReturn:
     """
     Log and handle errors gracefully.
 
@@ -75,15 +82,33 @@ class Weather(callbacks.Plugin):
         self.load_db()
         world.flushers.append(self.flush_db)
         self._loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(self._loop)
+        self._loop_thread = threading.Thread(
+            target=self._run_loop, name="WeatherAsyncLoop", daemon=True
+        )
+        self._session: Optional[aiohttp.ClientSession] = None
+        self._loop_thread.start()
         try:
-            self._session = self._loop.run_until_complete(self._create_session())
+            self._session = self._run_coro_threadsafe(self._create_session())
         except Exception as e:
             log.error(f"Weather: failed to create aiohttp session: {e}")
-            self._session = None
 
     async def _create_session(self):
-        return aiohttp.ClientSession(headers=HEADERS)
+        timeout = aiohttp.ClientTimeout(total=REQUEST_TIMEOUT_SECONDS)
+        return aiohttp.ClientSession(headers=HEADERS, timeout=timeout)
+
+    def _run_loop(self):
+        asyncio.set_event_loop(self._loop)
+        self._loop.run_forever()
+
+    def _run_coro_threadsafe(self, coro, timeout: int = REQUEST_TIMEOUT_SECONDS):
+        if self._loop.is_closed():
+            raise RuntimeError("Weather event loop is closed.")
+        future = asyncio.run_coroutine_threadsafe(coro, self._loop)
+        try:
+            return future.result(timeout=timeout)
+        except FutureTimeoutError as e:
+            future.cancel()
+            raise RuntimeError("Timed out waiting for async task.") from e
 
     def load_db(self):
         try:
@@ -107,10 +132,14 @@ class Weather(callbacks.Plugin):
     def die(self):
         if self._session is not None:
             try:
-                self._loop.run_until_complete(self._session.close())
+                self._run_coro_threadsafe(self._session.close())
             except Exception as e:
                 log.warning(f"Weather: error closing aiohttp session: {e}")
         try:
+            self._loop.call_soon_threadsafe(self._loop.stop)
+            self._loop_thread.join(timeout=REQUEST_TIMEOUT_SECONDS)
+            if self._loop_thread.is_alive():
+                log.warning("Weather: event loop thread did not stop cleanly.")
             self._loop.close()
         except Exception as e:
             log.warning(f"Weather: error closing event loop: {e}")
@@ -250,6 +279,13 @@ class Weather(callbacks.Plugin):
         Returns:
             dict: Parsed JSON response.
         """
+        if self._session is None:
+            handle_error(
+                RuntimeError("aiohttp session is unavailable"),
+                context=f"Fetching data from {url}",
+                user_message="Weather HTTP session is unavailable. Please try again later.",
+            )
+
         try:
             async with self._session.get(url, params=params) as response:
                 response.raise_for_status()
@@ -358,7 +394,13 @@ class Weather(callbacks.Plugin):
                     host = irc.state.nickToHostmask(optlist["user"])
                 else:
                     host = msg.prefix
-                ident_host = host.split("!")[1]
+                if not host or "!" not in host:
+                    irc.error(
+                        "Unable to determine a hostmask for that nickname.",
+                        Raise=True,
+                    )
+                    return
+                ident_host = host.split("!", 1)[1]
                 location = self.db[ident_host]
             except KeyError:
                 if ident_host is None:
@@ -374,6 +416,9 @@ class Weather(callbacks.Plugin):
                         % ircutils.bold("*!" + ident_host),
                         Raise=True,
                     )
+        if location is None:
+            irc.error("No location was provided.", Raise=True)
+            return
         location = location.lower()
 
         async def process_weather():
@@ -402,7 +447,7 @@ class Weather(callbacks.Plugin):
 
         # Run the async process
         try:
-            result = self._loop.run_until_complete(process_weather())
+            result = self._run_coro_threadsafe(process_weather())
             if result:
                 irc.reply(result, prefixNick=False)
         except Exception as e:
@@ -450,7 +495,7 @@ class Weather(callbacks.Plugin):
                     e, context=f"Processing Google command for location: {location}"
                 )
 
-        self._loop.run_until_complete(process_google())
+        self._run_coro_threadsafe(process_google())
 
 
 Class = Weather
