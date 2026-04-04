@@ -1,3 +1,5 @@
+<!-- A fully asynchronous Weather plugin for Limnoria using the OpenWeather and Google Maps APIs. -->
+
 <h1 align="center">Weather</h1>
 
 <!-- README_HEADER:start -->
@@ -17,7 +19,6 @@
   <img src="https://img.shields.io/badge/License-BSD_3--Clause-blue.svg" alt="License">
 </p>
 <!-- README_HEADER:end -->
-
 
 <p align="center">
   <em>A fully asynchronous Weather plugin for Limnoria using the OpenWeather and Google Maps APIs.</em>
