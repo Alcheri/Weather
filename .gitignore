@@ -2,6 +2,8 @@
 __pycache__/
 local/__pycache__/
 *.py[cod]
+.pytest_cache/
+CACHEDIR.TAG
 
 # Virtual environments
 .venv/
