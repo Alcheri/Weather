@@ -1,4 +1,9 @@
-#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+###
+# Copyright © 2017 - 2026, Barry Suridge
+# All rights reserved.
+#
+###
 
 
 @staticmethod
