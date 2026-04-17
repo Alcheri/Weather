@@ -98,3 +98,8 @@ The Mermaid source remains available for editing.
 
 <br/><br/>
 <p align="center">Copyright © MMXXVI, Barry Suridge</p>
+
+## Python Source Header Policy
+
+- In Python 3 files, do not add `# -*- coding: utf-8 -*-` unless a non-default source encoding is required.
+- Use `#!/usr/bin/env python3` only for executable scripts, not import-only modules.

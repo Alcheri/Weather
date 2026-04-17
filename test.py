@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 ###
 # Copyright (c) 2017 - 2026, Barry Suridge
 # All rights reserved.
