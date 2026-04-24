@@ -18,6 +18,20 @@ classifiers = [
 [project.entry-points.'limnoria.plugins']
 Weather = "limnoria_weather"
 
+[tool.black]
+target-version = ["py39"]
+extend-exclude = '''
+/(
+    backup
+  | conf
+  | data
+  | logs
+  | tmp
+  | __pycache__
+  | \.pytest_cache
+)/
+'''
+
 [tool.setuptools.package-dir]
 "limnoria_weather" = "."
 "limnoria_weather.local" = "local/"
