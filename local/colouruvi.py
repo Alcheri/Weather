@@ -27,7 +27,7 @@ class UVI:
 
         # Handle invalid values
         if uvi < 0:
-            return ircutils.mircColor(f"Unknown UVI", "light grey")
+            return ircutils.mircColor("Unknown UVI", "light grey")
 
         # Match the UV index to a range and return coloured text with description
         for lower, upper, colour, description in ranges:

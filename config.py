@@ -11,7 +11,9 @@ try:
 
     _ = PluginInternationalization("Weather")
 except ImportError:
-    _ = lambda x: x
+
+    def _(text):
+        return text
 
 
 def configure(advanced):

@@ -24,14 +24,17 @@ from datetime import datetime, timezone
 import supybot.world as world
 import supybot.conf as conf
 from supybot import ircutils, callbacks, log
-from supybot.commands import *
+from supybot.commands import additional, getopts, wrap
 
 try:
     from supybot.i18n import PluginInternationalization
 
     _ = PluginInternationalization("Weather")
 except ImportError:
-    _ = lambda x: x
+
+    def _(text):
+        return text
+
 
 # Constants
 APOSTROPHE = "\N{APOSTROPHE}"
@@ -165,7 +168,7 @@ class Weather(callbacks.Plugin):
 
         # Handle invalid values
         if uvi < 0:
-            return ircutils.mircColor(f"Unknown UVI", "light grey")
+            return ircutils.mircColor("Unknown UVI", "light grey")
 
         # Match the UV index to a range and return coloured text with description
         for lower, upper, colour, description in ranges:
@@ -409,9 +412,9 @@ class Weather(callbacks.Plugin):
                     )
                 else:
                     irc.error(
-                        f"No location for %s is set. Use the \u2018set\u2019 command "
-                        f"to set a location for your current hostmask, or call \u2018weather\u2019 "
-                        f"with <location> as an argument."
+                        "No location for %s is set. Use the \u2018set\u2019 command "
+                        "to set a location for your current hostmask, or call \u2018weather\u2019 "
+                        "with <location> as an argument."
                         % ircutils.bold("*!" + ident_host),
                         Raise=True,
                     )
