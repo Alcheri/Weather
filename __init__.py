@@ -33,11 +33,17 @@ __contributors__ = {}
 __url__ = "https://github.com/Alcheri/Weather"
 
 from . import config
+from .local import client
+from .local import formatting
+from .local import storage
 from . import plugin
 from importlib import import_module, reload
 
 # In case we're being reloaded.
 reload(config)
+reload(client)
+reload(formatting)
+reload(storage)
 reload(plugin)
 
 # Add more reloads here if you add third-party modules and want them to be

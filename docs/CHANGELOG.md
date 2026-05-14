@@ -13,6 +13,10 @@ All notable changes to the Weather plugin are documented here.
 - Dedicated async loop thread execution model (`_run_loop` + `_run_coro_threadsafe`) for thread-safe command handling.
 - Pytest discovery config in `pyproject.toml` and pytest-compatible test harness integration.
 - Concurrency regression tests for parallel task scheduling and timeout/cancellation recovery.
+- User-facing command-path tests covering `weather`, `weather --forecast`,
+  `weather --user`, `google`, `set`, and `unset`.
+- Local helper modules for API access, formatting, and saved-location storage
+  (`local/client.py`, `local/formatting.py`, `local/storage.py`).
 
 ### Changed
 
@@ -24,6 +28,12 @@ All notable changes to the Weather plugin are documented here.
 - Runtime Python version gate fixed to correctly allow Python 3.9+.
 - `requires-python` aligned with runtime requirement (`>=3.9`).
 - Error handling and validation hardened for unavailable HTTP session and hostmask/location edge cases.
+- README rewritten to document the current command surface, configuration, and
+  negative-coordinate usage.
+- Ruff debt cleaned up and the plugin brought back to passing Ruff and Black
+  checks.
+- `plugin.py` slimmed down to Limnoria orchestration, delegating HTTP, storage,
+  and formatting work to local helper modules.
 
 ---
 
