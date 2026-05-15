@@ -1,5 +1,9 @@
 # Weather
 
+[![CodeQL](https://github.com/Alcheri/Weather/actions/workflows/codeql.yml/badge.svg?branch=Limnoria-Weather)](https://github.com/Alcheri/Weather/actions/workflows/codeql.yml)
+[![CI](https://github.com/Alcheri/Weather/actions/workflows/ci.yml/badge.svg?branch=Limnoria-Weather)](https://github.com/Alcheri/Weather/actions/workflows/ci.yml)
+[![License](https://img.shields.io/badge/license-Copyright-blue.svg)](./LICENCE.md)
+
 A fully asynchronous Limnoria plugin that uses the Google Maps Geocoding API
 to resolve locations and the OpenWeather One Call 3.0 API to report current
 conditions and forecasts.
