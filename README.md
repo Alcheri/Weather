@@ -121,6 +121,7 @@ python -m black --check .
 python -m pytest
 ```
 
+<!-- Badge reference definitions -->
 [codeql-badge]: https://github.com/Alcheri/Weather/actions/workflows/codeql.yml/badge.svg?branch=Limnoria-Weather
 [codeql-link]: https://github.com/Alcheri/Weather/actions/workflows/codeql.yml
 [ci-badge]: https://github.com/Alcheri/Weather/actions/workflows/ci.yml/badge.svg?branch=Limnoria-Weather
