@@ -1,8 +1,8 @@
 # Weather
 
-[![CodeQL](https://github.com/Alcheri/Weather/actions/workflows/codeql.yml/badge.svg?branch=Limnoria-Weather)](https://github.com/Alcheri/Weather/actions/workflows/codeql.yml)
-[![CI](https://github.com/Alcheri/Weather/actions/workflows/ci.yml/badge.svg?branch=Limnoria-Weather)](https://github.com/Alcheri/Weather/actions/workflows/ci.yml)
-[![License](https://img.shields.io/badge/license-Copyright-blue.svg)](./LICENCE.md)
+[![CodeQL][codeql-badge]][codeql-link]
+[![CI][ci-badge]][ci-link]
+[![License][license-badge]][license-link]
 
 A fully asynchronous Limnoria plugin that uses the Google Maps Geocoding API
 to resolve locations and the OpenWeather One Call 3.0 API to report current
@@ -120,3 +120,10 @@ python -m ruff check .
 python -m black --check .
 python -m pytest
 ```
+
+[codeql-badge]: https://github.com/Alcheri/Weather/actions/workflows/codeql.yml/badge.svg?branch=Limnoria-Weather
+[codeql-link]: https://github.com/Alcheri/Weather/actions/workflows/codeql.yml
+[ci-badge]: https://github.com/Alcheri/Weather/actions/workflows/ci.yml/badge.svg?branch=Limnoria-Weather
+[ci-link]: https://github.com/Alcheri/Weather/actions/workflows/ci.yml
+[license-badge]: https://img.shields.io/badge/license-Copyright-blue.svg
+[license-link]: ./LICENCE.md
