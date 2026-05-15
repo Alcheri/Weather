@@ -2,7 +2,7 @@
 # Weather
 
 [![CodeQL][codeql-badge]][codeql-link]
-[![CI][ci-badge]][ci-link]
+![CI][ci-badge]
 [![License][license-badge]][license-link]
 
 A fully asynchronous Limnoria plugin that uses the Google Maps Geocoding API
