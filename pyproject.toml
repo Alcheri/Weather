@@ -19,6 +19,7 @@ classifiers = [
 Weather = "limnoria_weather"
 
 [tool.black]
+line-length = 79
 target-version = ["py39"]
 extend-exclude = '''
 /(
