@@ -1,3 +1,4 @@
+<!-- A fully asynchronous Weather plugin for Limnoria using the OpenWeather and Google Maps APIs. -->
 # Weather
 
 [![CodeQL][codeql-badge]][codeql-link]
