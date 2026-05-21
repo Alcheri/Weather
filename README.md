@@ -53,8 +53,14 @@ Enable the plugin per channel:
 /msg bot config channel #channel plugins.Weather.enabled True
 ```
 
-If the channel-scoped `enabled` value is `False`, the `weather` command does
-not reply in that channel.
+If the channel-scoped `enabled` value is `False`, the `weather` and `google`
+commands do not reply in that channel.
+
+Optional API lookup cooldown:
+
+```text
+/msg bot config channel #channel plugins.Weather.cooldownSeconds 10
+```
 
 ## Commands
 
@@ -114,6 +120,8 @@ Examples:
 
 - Country codes should use ISO 3166-1 alpha-2 codes where applicable.
 - Saved locations are stored per `ident@host`.
+- Saved locations are normalised and capped at 160 characters.
+- API-backed commands use the channel-scoped cooldown to protect API quota.
 - The plugin keeps its own async event loop and HTTP session so Limnoria
   commands can remain synchronous from the user's point of view.
 
@@ -141,4 +149,3 @@ python -m pytest
 [black-badge]: https://img.shields.io/badge/code%20style-black-000000.svg
 [limnoria-badge]: https://img.shields.io/badge/limnoria-compatible-brightgreen.svg
 [license-badge]: https://img.shields.io/badge/License-BSD_3--Clause-blue.svg
-

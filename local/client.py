@@ -9,6 +9,8 @@ from typing import Awaitable, Callable, Optional
 import aiohttp
 from supybot import callbacks, log
 
+MAX_JSON_RESPONSE_BYTES = 262144
+
 
 async def create_session(
     headers: dict[str, str], timeout_seconds: int
@@ -35,6 +37,11 @@ async def fetch_json(
     try:
         async with session.get(url, params=params) as response:
             response.raise_for_status()
+            if response.content_type != "application/json":
+                raise ValueError("Unexpected response content type.")
+            length = response.headers.get("Content-Length")
+            if length and int(length) > MAX_JSON_RESPONSE_BYTES:
+                raise ValueError("Response was too large.")
             return await response.json()
     except aiohttp.ClientResponseError as error:
         error_handler(error, context=f"HTTP error for {url}")

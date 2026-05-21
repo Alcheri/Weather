@@ -25,19 +25,33 @@ Weather = conf.registerPlugin("Weather")
 conf.registerGlobalValue(
     Weather,
     "googlemapsAPI",
-    registry.String("", _("""Sets the API key for Google Maps."""), private=True),
+    registry.String(
+        "", _("""Sets the API key for Google Maps."""), private=True
+    ),
 )
 
 conf.registerGlobalValue(
     Weather,
     "openweatherAPI",
-    registry.String("", _("""Sets the API key for Open Weather."""), private=True),
+    registry.String(
+        "", _("""Sets the API key for Open Weather."""), private=True
+    ),
 )
 
 conf.registerChannelValue(
     Weather,
     "enabled",
     registry.Boolean(False, """Should plugin work in this channel?"""),
+)
+
+conf.registerChannelValue(
+    Weather,
+    "cooldownSeconds",
+    registry.NonNegativeInteger(
+        10,
+        _("""Sets the per-user Weather API lookup cooldown for this channel,
+        in seconds. Set to 0 to disable cooldowns."""),
+    ),
 )
 
 # vim:set shiftwidth=4 tabstop=4 expandtab textwidth=79:

@@ -5,6 +5,8 @@
 ###
 
 import json
+import os
+from pathlib import Path
 
 from supybot import log
 
@@ -31,11 +33,19 @@ class WeatherLocationStore:
         return self.data
 
     def flush(self) -> None:
+        path = Path(self.filename)
+        tmp_path = path.with_name(f".{path.name}.tmp")
         try:
-            with open(self.filename, "w", encoding="utf-8") as handle:
+            with open(tmp_path, "w", encoding="utf-8") as handle:
                 json.dump(self.data, handle, indent=4)
+                handle.write("\n")
+            os.replace(tmp_path, path)
         except Exception as error:
             log.warning(f"Unable to save database: {error}")
+            try:
+                tmp_path.unlink(missing_ok=True)
+            except OSError:
+                pass
 
     def get(self, ident_host: str) -> str:
         return self.data[ident_host]

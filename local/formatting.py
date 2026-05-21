@@ -134,7 +134,9 @@ def format_weather_results(location: str, weather_data: dict) -> str:
     """Format weather data for display."""
     return " | ".join(
         [
-            format_location(weather_data["lat"], weather_data["lon"], location),
+            format_location(
+                weather_data["lat"], weather_data["lon"], location
+            ),
             format_current_conditions(weather_data["current"]),
         ]
     )
@@ -145,10 +147,14 @@ def format_forecast_results(location: str, weather_data: dict) -> str:
     formatted_data = [f"Forecast for {location}:"]
 
     for day in weather_data["daily"][:5]:
-        date = datetime.fromtimestamp(day["dt"], tz=timezone.utc).strftime("%A")
+        date = datetime.fromtimestamp(day["dt"], tz=timezone.utc).strftime(
+            "%A"
+        )
         desc = day["weather"][0]["description"].capitalize()
         min_temp = colour_temperature(round(day["temp"]["min"]))
         max_temp = colour_temperature(round(day["temp"]["max"]))
-        formatted_data.append(f"{date}: {desc}, Min: {min_temp}, Max: {max_temp}")
+        formatted_data.append(
+            f"{date}: {desc}, Min: {min_temp}, Max: {max_temp}"
+        )
 
     return " | ".join(formatted_data)

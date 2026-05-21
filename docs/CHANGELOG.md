@@ -8,6 +8,7 @@ All notable changes to the Weather plugin are documented here.
 
 ### Added
 
+- Channel-scoped `cooldownSeconds` setting for API-backed commands.
 - CodeQL static analysis workflow (`.github/workflows/codeql.yml`).
 - CodeQL and code-style badges in README.
 - Dedicated async loop thread execution model (`_run_loop` + `_run_coro_threadsafe`) for thread-safe command handling.
@@ -34,6 +35,10 @@ All notable changes to the Weather plugin are documented here.
   checks.
 - `plugin.py` slimmed down to Limnoria orchestration, delegating HTTP, storage,
   and formatting work to local helper modules.
+- Location validation, bounded output sanitising, HTTP response guards, and
+  atomic saved-location writes hardened during security review.
+- The `google` command now honours the channel-scoped `enabled` setting.
+- User-Agent header updated to `Limnoria-Weather/1.1`.
 
 ---
 

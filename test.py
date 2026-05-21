@@ -53,12 +53,22 @@ class WeatherCommandTestCase(supybot_test.PluginTestCase):
     def _enabled_registry_value(name, *args):
         if name == "enabled":
             return True
+        if name == "cooldownSeconds":
+            return 0
         raise AssertionError(f"Unexpected registry lookup: {name} {args}")
 
     def test_set_stores_default_location_for_hostmask(self):
-        self.assertNotError("set Ballarat VIC AU", frm="alice!user@example.test")
+        self.assertNotError(
+            "set Ballarat VIC AU", frm="alice!user@example.test"
+        )
 
         self.assertEqual(self.cb.db["user@example.test"], "ballarat vic au")
+
+    def test_set_rejects_overlong_location(self):
+        self.assertError(
+            "set " + ("x" * 161),
+            frm="alice!user@example.test",
+        )
 
     def test_unset_removes_default_location_for_hostmask(self):
         self.cb.db["user@example.test"] = "ballarat vic au"
@@ -68,19 +78,26 @@ class WeatherCommandTestCase(supybot_test.PluginTestCase):
         self.assertNotIn("user@example.test", self.cb.db)
 
     def test_google_replies_with_google_maps_result(self):
-        with patch.object(
-            self.cb,
-            "google_maps",
-            new=AsyncMock(
-                return_value=(
-                    "Ballarat VIC 3350, Australia",
-                    -37.5621587,
-                    143.8502556,
-                    "3350",
-                    "place-123",
-                )
+        with (
+            patch.object(
+                self.cb,
+                "registryValue",
+                side_effect=self._enabled_registry_value,
             ),
-        ) as google_maps:
+            patch.object(
+                self.cb,
+                "google_maps",
+                new=AsyncMock(
+                    return_value=(
+                        "Ballarat VIC 3350, Australia",
+                        -37.5621587,
+                        143.8502556,
+                        "3350",
+                        "place-123",
+                    )
+                ),
+            ) as google_maps,
+        ):
             self.assertResponse(
                 "google Ballarat VIC AU",
                 "From Google Maps: \x02Ballarat VIC 3350, Australia\x02 "
@@ -90,10 +107,20 @@ class WeatherCommandTestCase(supybot_test.PluginTestCase):
 
         google_maps.assert_awaited_once_with("ballarat vic au")
 
+    def test_google_does_not_reply_when_channel_disabled(self):
+        with patch.object(
+            self.cb, "google_maps", new=AsyncMock()
+        ) as google_maps:
+            self.assertNoResponse("google Ballarat VIC AU", timeout=1)
+
+        google_maps.assert_not_awaited()
+
     def test_weather_replies_for_explicit_location(self):
         with (
             patch.object(
-                self.cb, "registryValue", side_effect=self._enabled_registry_value
+                self.cb,
+                "registryValue",
+                side_effect=self._enabled_registry_value,
             ),
             patch.object(
                 self.cb,
@@ -109,7 +136,9 @@ class WeatherCommandTestCase(supybot_test.PluginTestCase):
                 ),
             ) as google_maps,
             patch.object(
-                self.cb, "openweather", new=AsyncMock(return_value={"current": {}})
+                self.cb,
+                "openweather",
+                new=AsyncMock(return_value={"current": {}}),
             ) as openweather,
             patch.object(
                 self.cb,
@@ -117,7 +146,9 @@ class WeatherCommandTestCase(supybot_test.PluginTestCase):
                 new=AsyncMock(return_value="Current weather output"),
             ) as format_weather,
         ):
-            self.assertResponse("weather Ballarat VIC AU", "Current weather output")
+            self.assertResponse(
+                "weather Ballarat VIC AU", "Current weather output"
+            )
 
         google_maps.assert_awaited_once_with("ballarat vic au")
         openweather.assert_awaited_once_with(-37.5621587, 143.8502556)
@@ -128,7 +159,9 @@ class WeatherCommandTestCase(supybot_test.PluginTestCase):
     def test_weather_forecast_replies_for_explicit_location(self):
         with (
             patch.object(
-                self.cb, "registryValue", side_effect=self._enabled_registry_value
+                self.cb,
+                "registryValue",
+                side_effect=self._enabled_registry_value,
             ),
             patch.object(
                 self.cb,
@@ -144,7 +177,9 @@ class WeatherCommandTestCase(supybot_test.PluginTestCase):
                 ),
             ),
             patch.object(
-                self.cb, "openweather", new=AsyncMock(return_value={"daily": []})
+                self.cb,
+                "openweather",
+                new=AsyncMock(return_value={"daily": []}),
             ) as openweather,
             patch.object(
                 self.cb,
@@ -152,7 +187,9 @@ class WeatherCommandTestCase(supybot_test.PluginTestCase):
                 new=AsyncMock(return_value="Forecast output"),
             ) as format_forecast,
         ):
-            self.assertResponse("weather --forecast Ballarat VIC AU", "Forecast output")
+            self.assertResponse(
+                "weather --forecast Ballarat VIC AU", "Forecast output"
+            )
 
         openweather.assert_awaited_once_with(-37.5621587, 143.8502556)
         format_forecast.assert_awaited_once_with(
@@ -164,7 +201,9 @@ class WeatherCommandTestCase(supybot_test.PluginTestCase):
 
         with (
             patch.object(
-                self.cb, "registryValue", side_effect=self._enabled_registry_value
+                self.cb,
+                "registryValue",
+                side_effect=self._enabled_registry_value,
             ),
             patch.object(
                 self.irc.state,
@@ -185,7 +224,9 @@ class WeatherCommandTestCase(supybot_test.PluginTestCase):
                 ),
             ) as google_maps,
             patch.object(
-                self.cb, "openweather", new=AsyncMock(return_value={"current": {}})
+                self.cb,
+                "openweather",
+                new=AsyncMock(return_value={"current": {}}),
             ),
             patch.object(
                 self.cb,
@@ -193,7 +234,9 @@ class WeatherCommandTestCase(supybot_test.PluginTestCase):
                 new=AsyncMock(return_value="Saved weather output"),
             ),
         ):
-            self.assertResponse("weather --user Friend", "Saved weather output")
+            self.assertResponse(
+                "weather --user Friend", "Saved weather output"
+            )
 
         google_maps.assert_awaited_once_with("ballarat vic au")
 
@@ -231,7 +274,8 @@ class WeatherConcurrencyTestCase(unittest.TestCase):
             weather._loop.call_soon_threadsafe(weather._loop.stop)
             weather._loop_thread.join(timeout=3)
             self.assertFalse(
-                weather._loop_thread.is_alive(), "Weather test loop thread did not stop"
+                weather._loop_thread.is_alive(),
+                "Weather test loop thread did not stop",
             )
             weather._loop.close()
 
@@ -241,13 +285,17 @@ class WeatherConcurrencyTestCase(unittest.TestCase):
         weather = plugin.Weather.__new__(plugin.Weather)
         weather._loop = asyncio.new_event_loop()
         weather._loop_thread = threading.Thread(
-            target=weather._run_loop, name="WeatherTestLoopTimeout", daemon=True
+            target=weather._run_loop,
+            name="WeatherTestLoopTimeout",
+            daemon=True,
         )
         weather._loop_thread.start()
 
         try:
             with self.assertRaises(RuntimeError) as cm:
-                weather._run_coro_threadsafe(asyncio.sleep(2, result="slow"), timeout=1)
+                weather._run_coro_threadsafe(
+                    asyncio.sleep(2, result="slow"), timeout=1
+                )
 
             self.assertIn("Timed out", str(cm.exception))
 
@@ -260,7 +308,8 @@ class WeatherConcurrencyTestCase(unittest.TestCase):
             weather._loop.call_soon_threadsafe(weather._loop.stop)
             weather._loop_thread.join(timeout=3)
             self.assertFalse(
-                weather._loop_thread.is_alive(), "Weather test loop thread did not stop"
+                weather._loop_thread.is_alive(),
+                "Weather test loop thread did not stop",
             )
             weather._loop.close()
 
