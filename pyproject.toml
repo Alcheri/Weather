@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "limnoria-weather"
 version = "1.1.0"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 authors = [{ name = "Barry Suridge", email = "barry.suridge@outlook.com" }]
 dependencies = ["aiohttp"]
 classifiers = [
