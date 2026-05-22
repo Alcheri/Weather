@@ -2,13 +2,14 @@
 
 # Weather
 
+<!-- README_HEADER:start -->
 [![Tests][tests-badge]][tests-link]
 [![Lint][lint-badge]][lint-link]
 [![CodeQL][codeql-badge]][codeql-link]
 ![Python][python-badge]
 ![Black][black-badge]
 ![Limnoria][limnoria-badge]
-![License][license-badge]
+<!-- README_HEADER:end -->
 
 A fully asynchronous Limnoria plugin that uses the Google Maps Geocoding API
 to resolve locations and the OpenWeather One Call 3.0 API to report current
@@ -145,7 +146,6 @@ python -m pytest
 [codeql-badge]: https://github.com/Alcheri/Weather/actions/workflows/codeql.yml/badge.svg
 [codeql-link]: https://github.com/Alcheri/Weather/security/code-scanning
 
-[python-badge]: https://img.shields.io/badge/python-3.9%2B-blue.svg
+[python-badge]: https://img.shields.io/badge/python-3.11.2-blue.svg
 [black-badge]: https://img.shields.io/badge/code%20style-black-000000.svg
 [limnoria-badge]: https://img.shields.io/badge/limnoria-compatible-brightgreen.svg
-[license-badge]: https://img.shields.io/badge/License-BSD_3--Clause-blue.svg
