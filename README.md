@@ -19,7 +19,7 @@ All output is in metric units.
 
 ## Requirements
 
-- Python 3.9 or newer
+- Python 3.10 or newer
 - `aiohttp`
 - A Google Maps Geocoding API key
 - An OpenWeather One Call 3.0 API key
